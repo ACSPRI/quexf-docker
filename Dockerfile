@@ -1,7 +1,7 @@
 FROM php:5.6-apache
 
 # install the PHP extensions we need
-RUN apt-get update && apt-get install -y bzr libpng12-dev libjpeg-dev mysql-client ghostscript libphp-adodb tesseract-ocr apache2-utils && rm -rf /var/lib/apt/lists/* \
+RUN apt-get update && apt-get install -y bzr libpng12-dev libjpeg-dev mysql-client ghostscript tesseract-ocr apache2-utils && rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
 	&& docker-php-ext-install gd mysqli mysql opcache
 
@@ -29,12 +29,21 @@ RUN set -x \
 	&& bzr branch lp:quexf /usr/src/quexf \
 	&& chown -R www-data:www-data /usr/src/quexf
 
+#use ADODB
+RUN set -x \
+	&& curl -o adodb.tar.gz -fSL "https://github.com/ADOdb/ADOdb/archive/v5.20.7.tar.gz" \
+	&& tar -xzf adodb.tar.gz -C /usr/src/ \
+	&& rm adodb.tar.gz \
+	&& mkdir /usr/share/php \
+	&& mv /usr/src/ADOdb-5.20.7 /usr/share/php/adodb
+
 #Set PHP defaults for queXS (allow bigger uploads for sample files)
 RUN { \
 		echo 'memory_limit=256M'; \
 		echo 'upload_max_filesize=128M'; \
 		echo 'post_max_size=128M'; \
 		echo 'max_execution_time=120'; \
+        echo 'max_input_vars=10000'; \
         echo 'date.timezone=UTC'; \
 	} > /usr/local/etc/php/conf.d/uploads.ini
 
