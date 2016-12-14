@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+
+  quexf:
+    image: acspri/quexf
+    ports:
+      - 8081:80
+    environment:
+      QUEXF_DB_PASSWORD: example
+      QUEXF_ADMIN_PASSWORD: password
+
+  mysql:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: example

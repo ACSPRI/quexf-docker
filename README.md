@@ -1,45 +1,84 @@
-# quexf-docker
+# What is queXF?
 
-Docker image for queXF based on tutum/lamp
+[queXF](https://quexf.acspri.org.au/) is a free and open source system web based paper form verification and data entry system
 
+# How to use this image
 
-Usage
------
+```console
+$ docker run --name some-quexf --link some-mysql:mysql -d -v /location-of-forms:/forms acspri/quexf
+```
 
-To create the image `acspri/quexf`, run the following command from the checkout of this repository:
+Where location-of-forms is a local path where PDF files will be monitored for importing
 
-    docker build -t acspri/quexf .
+The following environment variables are also honored for configuring your queXF instance:
 
-Running the queXF docker image
-------------------------------
+-	`-e QUEXF_DB_HOST=...` (defaults to the IP and port of the linked `mysql` container)
+-	`-e QUEXF_DB_USER=...` (defaults to "root")
+-	`-e QUEXF_DB_PASSWORD=...` (defaults to the value of the `MYSQL_ROOT_PASSWORD` environment variable from the linked `mysql` container)
+-	`-e QUEXF_DB_NAME=...` (defaults to "quexf")
+-	`-e QUEXF_ADMIN_PASSWORD=...` (defaults to "password")
 
-Start the image, bind port 80 on all interfaces to your container:
+If the `QUEXF_DB_NAME` specified does not already exist on the given MySQL server, it will be created automatically upon startup of the `quexf` container, provided that the `QUEXF_DB_USER` specified has the necessary permissions to create it.
 
-    docker run -d -p 80:80 -v /location-of-forms:/forms acspri/quexf
+If you'd like to be able to access the instance from the host without the container's IP, standard port mappings can be used:
 
-Where /location-of-forms is a directory on your local machine that contains PDF forms for importing
+```console
+$ docker run --name some-quexf --link some-mysql:mysql -p 8080:80 \
+     -v /location-of-forms:/forms -d acspri/quexf
+```
 
-Access queXF by visiting:
+Then, access it via `http://localhost:8080` or `http://host-ip:8080` in a browser.
 
-    http://localhost/
+If you'd like to use an external database instead of a linked `mysql` container, specify the hostname and port with `QUEXF_DB_HOST` along with the password in `QUEXF_DB_PASSWORD` and the username in `QUEXF_DB_USER` (if it is something other than `root`):
 
-A default username and password is created of:
+```console
+$ docker run --name some-quexf -e QUEXF_DB_HOST=10.1.2.3:3306 \
+	-v /location-of-forms:/forms \
+    -e QUEXF_DB_USER=... -e QUEXF_DB_PASSWORD=... -d acspri/quexf
+```
 
-    admin
-    password
+## ... via [`docker-compose`](https://github.com/docker/compose)
 
-To change the password - find the name of the running container:
+Example `docker-compose.yml` for `quexf`:
 
-    docker ps
+```yaml
+version: '2'
 
-then execute:
+services:
 
-    docker exec -i -t name_of_container /usr/bin/htpasswd -B /opt/quexf/password admin
+  quexf:
+    image: quexf
+    ports:
+      - 8080:80
+	volumes:
+	  - /location-of-forms:/forms
+    environment:
+      QUEXF_DB_PASSWORD: example
+      QUEXF_ADMIN_PASSWORD: password
 
+  mysql:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+```
+
+Run `docker-compose up`, wait for it to initialize completely, and visit `http://localhost:8080` or `http://host-ip:8080`.
+
+# Supported Docker versions
+
+This image is officially supported on Docker version 1.12.3.
+
+Support for older versions (down to 1.6) is provided on a best-effort basis.
+
+Please see [the Docker installation documentation](https://docs.docker.com/installation/) for details on how to upgrade your Docker daemon.
 
 Notes
 -----
 
-queXF is configured to enable Tesseract OCR.
+A default username is created:
 
-Images of forms are stored in the /images Volume
+    admin
+
+The password is specified by the QUEXF_ADMIN_PASSWORD environment variable (defaults to: password)
+
+This Dockerfile is based on the [Wordpress official docker image](https://github.com/docker-library/wordpress/tree/8ab70dd61a996d58c0addf4867a768efe649bf65/php5.6/apache)
