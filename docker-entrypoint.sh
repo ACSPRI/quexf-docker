@@ -78,7 +78,7 @@ EOF
 	if ! [ -e /opt/quexf/password ]; then
 		echo >&2 "queXF password not found in /opt/quexf/password - creating now..."
         
-		htpasswd -c -B -b /opt/quexf/password admin "{$QUEXF_ADMIN_PASSWORD}"
+		htpasswd -c -B -b /opt/quexf/password admin "$QUEXF_ADMIN_PASSWORD"
 
 		cat <<EOF > /opt/quexf/group
 admin: admin
@@ -92,6 +92,7 @@ EOF
 
 
     chown www-data:www-data -R /images 
+    chown www-data:www-data -R images 
     chown www-data:www-data -R /forms
 
 	# see http://stackoverflow.com/a/2705678/433558
