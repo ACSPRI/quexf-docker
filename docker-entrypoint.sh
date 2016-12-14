@@ -78,7 +78,11 @@ EOF
 	if ! [ -e /opt/quexf/password ]; then
 		echo >&2 "queXF password not found in /opt/quexf/password - creating now..."
         
-		htpasswd -c -B -b /opt/quexf/password admin "$QUEXF_ADMIN_PASSWORD"
+        if [ -z "$QUEXF_ADMIN_PASSWORD" ]; then
+            htpasswd -c -B -b /opt/quexf/password admin password
+        else
+            htpasswd -c -B -b /opt/quexf/password admin "$QUEXF_ADMIN_PASSWORD"
+		fi
 
 		cat <<EOF > /opt/quexf/group
 admin: admin
