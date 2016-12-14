@@ -25,6 +25,7 @@ file_env() {
 
 if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 	file_env 'QUEXF_DB_HOST' 'mysql'
+	file_env 'QUEXF_ADMIN_PASSWORD' 'password'
 	# if we're linked to MySQL and thus have credentials already, let's use them
 	file_env 'QUEXF_DB_USER' "${MYSQL_ENV_MYSQL_USER:-root}"
 	if [ "$QUEXF_DB_USER" = 'root' ]; then
@@ -50,21 +51,21 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 		bzr export . /usr/src/quexf
 
         cat <<EOF > admin/.htaccess
-AuthName "queXF Administration"
+AuthName "queXF"
 AuthType Basic
 AuthUserFile /opt/quexf/password
 AuthGroupFile /opt/quexf/group
 require group admin
 EOF
        cat <<EOF > client/.htaccess
-AuthName "queXF Client"
+AuthName "queXF"
 AuthType Basic
 AuthUserFile /opt/quexf/password
 AuthGroupFile /opt/quexf/group
 require group client
 EOF
        cat <<EOF > .htaccess
-AuthName "queXF Verification"
+AuthName "queXF"
 AuthType Basic
 AuthUserFile /opt/quexf/password
 AuthGroupFile /opt/quexf/group
@@ -78,11 +79,7 @@ EOF
 	if ! [ -e /opt/quexf/password ]; then
 		echo >&2 "queXF password not found in /opt/quexf/password - creating now..."
         
-        if [ -z "$QUEXF_ADMIN_PASSWORD" ]; then
-            htpasswd -c -B -b /opt/quexf/password admin password
-        else
-            htpasswd -c -B -b /opt/quexf/password admin "$QUEXF_ADMIN_PASSWORD"
-		fi
+        htpasswd -c -B -b /opt/quexf/password admin "$QUEXF_ADMIN_PASSWORD"
 
 		cat <<EOF > /opt/quexf/group
 admin: admin
