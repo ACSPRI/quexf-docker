@@ -1,9 +1,9 @@
-FROM php:5.6-apache
+FROM php:7-apache
 
 # install the PHP extensions we need
 RUN apt-get update && apt-get install -y bzr libpng12-dev libjpeg-dev mysql-client ghostscript tesseract-ocr apache2-utils && rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
-	&& docker-php-ext-install gd mysqli mysql opcache
+	&& docker-php-ext-install gd mysqli opcache
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
@@ -23,7 +23,7 @@ RUN mkdir /images && chown www-data:www-data /images
 RUN mkdir /opt/quexf && chown www-data:www-data /opt/quexf
 RUN mkdir /forms && chown www-data:www-data /forms
 
-VOLUME ["/var/www/html", "/images", "/opt/quexf"]
+VOLUME ["/var/www/html", "/images", "/forms", "/opt/quexf"]
 
 RUN set -x \
 	&& bzr branch lp:quexf /usr/src/quexf \

@@ -25,6 +25,8 @@ file_env() {
 
 if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 	file_env 'QUEXF_DB_HOST' 'mysql'
+    file_env 'QUEXF_FORMS_DIRECTORY' '/forms/'
+    file_env 'QUEXF_IMAGES_DIRECTORY' '/images/'
 	file_env 'QUEXF_ADMIN_PASSWORD' 'password'
 	# if we're linked to MySQL and thus have credentials already, let's use them
 	file_env 'QUEXF_DB_USER' "${MYSQL_ENV_MYSQL_USER:-root}"
@@ -108,14 +110,16 @@ EOF
 	}
 	set_config() {
 		key="$1"
-		value="$2"
-		sed -i "/$key/s/'[^']*'/'$value'/2" config.inc.php
+        value="$(sed_escape_lhs "$2")"
+        sed -i "/$key/s/[^,]*/'$value');/2" config.inc.php
 	}
 
 	set_config 'DB_HOST' "$QUEXF_DB_HOST"
 	set_config 'DB_USER' "$QUEXF_DB_USER"
 	set_config 'DB_PASS' "$QUEXF_DB_PASSWORD"
 	set_config 'DB_NAME' "$QUEXF_DB_NAME"
+    set_config 'SCANS_DIRECTORY' "$QUEXF_FORMS_DIRECTORY"
+    set_config 'IMAGES_DIRECTORY' "$QUEXF_IMAGES_DIRECTORY"
 
 	file_env 'QUEXF_DEBUG'
 	if [ "$QUEXF_DEBUG" ]; then
