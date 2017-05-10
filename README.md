@@ -17,6 +17,20 @@ The following environment variables are also honored for configuring your queXF 
 -	`-e QUEXF_DB_PASSWORD=...` (defaults to the value of the `MYSQL_ROOT_PASSWORD` environment variable from the linked `mysql` container)
 -	`-e QUEXF_DB_NAME=...` (defaults to "quexf")
 -	`-e QUEXF_ADMIN_PASSWORD=...` (defaults to "password")
+-	`-e QUEXF_FORMS_DIRECTORY=...` (defaults to "/forms/")
+-	`-e QUEXF_IMAGES_DIRECTORY=...` (defaults to "/images/")
+-	`-e QUEXF_DEBUG=...` (defaults to 0 / off)
+-	`-e QUEXF_OCR_ENABLED=...` (defaults to 0 / off)
+-	`-e QUEXF_HORI_WIDTH_BOX=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_VERT_WIDTH_BOX=...`  (see queXF config.default.php for details)
+-	`-e QUEXF_BARCODE_TLX_PORTION=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_BARCODE_TLY_PORTION=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_BARCODE_BRX_PORTION=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_BARCODE_BRY_PORTION=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_BARCODE_TLX_PORTION2=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_BARCODE_TLY_PORTION2=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_BARCODE_BRX_PORTION2=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_BARCODE_BRY_PORTION2=...` (see queXF config.default.php for details) 
 
 If the `QUEXF_DB_NAME` specified does not already exist on the given MySQL server, it will be created automatically upon startup of the `quexf` container, provided that the `QUEXF_DB_USER` specified has the necessary permissions to create it.
 
@@ -47,11 +61,11 @@ version: '2'
 services:
 
   quexf:
-    image: quexf
+    image: acspri/quexf
     ports:
       - 8080:80
-	volumes:
-	  - /location-of-forms:/forms
+    volumes:
+      - /location-of-forms:/forms
     environment:
       QUEXF_DB_PASSWORD: example
       QUEXF_ADMIN_PASSWORD: password

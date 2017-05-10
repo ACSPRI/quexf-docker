@@ -161,6 +161,26 @@ EOF
         set_config 'BARCODE_BRX_PORTION' "$QUEXF_BARCODE_BRX_PORTION" 
 	fi
 
+	file_env 'QUEXF_BARCODE_TLX_PORTION2'
+	if [ "$QUEXF_BARCODE_TLX_PORTION2" ]; then
+        set_config 'BARCODE_TLX_PORTION2' "$QUEXF_BARCODE_TLX_PORTION2" 
+	fi
+
+	file_env 'QUEXF_BARCODE_BRY_PORTION2'
+	if [ "$QUEXF_BARCODE_BRY_PORTION2" ]; then
+        set_config 'BARCODE_BRY_PORTION2' "$QUEXF_BARCODE_BRY_PORTION2" 
+	fi
+
+	file_env 'QUEXF_BARCODE_TLY_PORTION2'
+	if [ "$QUEXF_BARCODE_TLY_PORTION2" ]; then
+        set_config 'BARCODE_TLY_PORTION2' "$QUEXF_BARCODE_TLY_PORTION2" 
+	fi
+
+	file_env 'QUEXF_BARCODE_BRX_PORTION2'
+	if [ "$QUEXF_BARCODE_BRX_PORTION2" ]; then
+        set_config 'BARCODE_BRX_PORTION2' "$QUEXF_BARCODE_BRX_PORTION2" 
+	fi
+
 	TERM=dumb php -- "$QUEXF_DB_HOST" "$QUEXF_DB_USER" "$QUEXF_DB_PASSWORD" "$QUEXF_DB_NAME" <<'EOPHP'
 <?php
 // database might not exist, so let's try creating it (just to be safe)
