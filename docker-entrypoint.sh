@@ -126,6 +126,41 @@ EOF
 		set_config 'DEBUG' 1 
 	fi
 
+	file_env 'QUEXF_OCR_ENABLED'
+	if [ "$QUEXF_OCR_ENABLED" ]; then
+		set_config 'OCR_ENABLED' 'true' 
+	fi
+
+	file_env 'QUEXF_HORI_WIDTH_BOX'
+	if [ "$QUEXF_HORI_WIDTH_BOX" ]; then
+        set_config 'HORI_WIDTH_BOX' "$QUEXF_HORI_WIDTH_BOX" 
+	fi
+
+	file_env 'QUEXF_VERT_WIDTH_BOX'
+	if [ "$QUEXF_VERT_WIDTH_BOX" ]; then
+        set_config 'VERT_WIDTH_BOX' "$QUEXF_VERT_WIDTH_BOX" 
+	fi
+
+	file_env 'QUEXF_BARCODE_TLX_PORTION'
+	if [ "$QUEXF_BARCODE_TLX_PORTION" ]; then
+        set_config 'BARCODE_TLX_PORTION' "$QUEXF_BARCODE_TLX_PORTION" 
+	fi
+
+	file_env 'QUEXF_BARCODE_BRY_PORTION'
+	if [ "$QUEXF_BARCODE_BRY_PORTION" ]; then
+        set_config 'BARCODE_BRY_PORTION' "$QUEXF_BARCODE_BRY_PORTION" 
+	fi
+
+	file_env 'QUEXF_BARCODE_TLY_PORTION'
+	if [ "$QUEXF_BARCODE_TLY_PORTION" ]; then
+        set_config 'BARCODE_TLY_PORTION' "$QUEXF_BARCODE_TLY_PORTION" 
+	fi
+
+	file_env 'QUEXF_BARCODE_BRX_PORTION'
+	if [ "$QUEXF_BARCODE_BRX_PORTION" ]; then
+        set_config 'BARCODE_BRX_PORTION' "$QUEXF_BARCODE_BRX_PORTION" 
+	fi
+
 	TERM=dumb php -- "$QUEXF_DB_HOST" "$QUEXF_DB_USER" "$QUEXF_DB_PASSWORD" "$QUEXF_DB_NAME" <<'EOPHP'
 <?php
 // database might not exist, so let's try creating it (just to be safe)
