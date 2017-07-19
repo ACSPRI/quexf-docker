@@ -39,7 +39,7 @@ RUN set -x \
 
 #Set PHP defaults for queXS (allow bigger uploads for sample files)
 RUN { \
-		echo 'memory_limit=256M'; \
+		echo 'memory_limit=384M'; \
 		echo 'upload_max_filesize=128M'; \
 		echo 'post_max_size=128M'; \
 		echo 'max_execution_time=120'; \
