@@ -31,6 +31,7 @@ The following environment variables are also honored for configuring your queXF 
 -	`-e QUEXF_BARCODE_TLY_PORTION2=...` (see queXF config.default.php for details) 
 -	`-e QUEXF_BARCODE_BRX_PORTION2=...` (see queXF config.default.php for details) 
 -	`-e QUEXF_BARCODE_BRY_PORTION2=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_DISPLAY_PAGE_WIDTH=...` (defaults to 800 pixels wide for verifier display) 
 
 If the `QUEXF_DB_NAME` specified does not already exist on the given MySQL server, it will be created automatically upon startup of the `quexf` container, provided that the `QUEXF_DB_USER` specified has the necessary permissions to create it.
 

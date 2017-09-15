@@ -181,6 +181,11 @@ EOF
         set_config 'BARCODE_BRX_PORTION2' "$QUEXF_BARCODE_BRX_PORTION2" 
 	fi
 
+    file_env 'QUEXF_DISPLAY_PAGE_WIDTH'
+	if [ "$QUEXF_DISPLAY_PAGE_WIDTH" ]; then
+        set_config 'DISPLAY_PAGE_WIDTH' "$QUEXF_DISPLAY_PAGE_WIDTH" 
+	fi
+
 	TERM=dumb php -- "$QUEXF_DB_HOST" "$QUEXF_DB_USER" "$QUEXF_DB_PASSWORD" "$QUEXF_DB_NAME" <<'EOPHP'
 <?php
 // database might not exist, so let's try creating it (just to be safe)
