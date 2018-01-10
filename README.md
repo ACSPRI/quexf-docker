@@ -32,6 +32,12 @@ The following environment variables are also honored for configuring your queXF 
 -	`-e QUEXF_BARCODE_BRX_PORTION2=...` (see queXF config.default.php for details) 
 -	`-e QUEXF_BARCODE_BRY_PORTION2=...` (see queXF config.default.php for details) 
 -	`-e QUEXF_DISPLAY_PAGE_WIDTH=...` (defaults to 800 pixels wide for verifier display) 
+-	`-e QUEXF_SINGLE_CHOICE_MIN_FILLED=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_SINGLE_CHOICE_MAX_FILLED=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_MULTIPLE_CHOICE_MIN_FILLED=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_MULTIPLE_CHOICE_MAX_FILLED=...` (see queXF config.default.php for details) 
+-	`-e QUEXF_HTPASSWD_PATH=...` (see queXF config.default.php for details, set this to /opt/quexf/password for auto password setting in this Docker container) 
+-	`-e QUEXF_HTGROUP_PATH=...` (see queXF config.default.php for details, set this to /opt/quexf/group for auto password setting in this Docker container) 
 
 If the `QUEXF_DB_NAME` specified does not already exist on the given MySQL server, it will be created automatically upon startup of the `quexf` container, provided that the `QUEXF_DB_USER` specified has the necessary permissions to create it.
 

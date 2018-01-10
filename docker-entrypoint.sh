@@ -97,6 +97,8 @@ EOF
     chown www-data:www-data -R /images 
     chown www-data:www-data -R images 
     chown www-data:www-data -R /forms
+    
+	chown www-data:www-data -R /opt/quexf
 
 	# see http://stackoverflow.com/a/2705678/433558
 	sed_escape_lhs() {
@@ -186,6 +188,36 @@ EOF
         set_config 'DISPLAY_PAGE_WIDTH' "$QUEXF_DISPLAY_PAGE_WIDTH" 
 	fi
 
+    file_env 'QUEXF_MULTIPLE_CHOICE_MIN_FILLED'
+	if [ "$QUEXF_MULTIPLE_CHOICE_MIN_FILLED'" ]; then
+        set_config 'MULTIPLE_CHOICE_MIN_FILLED' "$QUEXF_MULTIPLE_CHOICE_MIN_FILLED" 
+	fi
+
+    file_env 'QUEXF_MULTIPLE_CHOICE_MAX_FILLED'
+	if [ "$QUEXF_MULTIPLE_CHOICE_MAX_FILLED'" ]; then
+        set_config 'MULTIPLE_CHOICE_MAX_FILLED' "$QUEXF_MULTIPLE_CHOICE_MAX_FILLED" 
+	fi
+
+    file_env 'QUEXF_SINGLE_CHOICE_MIN_FILLED'
+	if [ "$QUEXF_SINGLE_CHOICE_MIN_FILLED'" ]; then
+        set_config 'SINGLE_CHOICE_MIN_FILLED' "$QUEXF_SINGLE_CHOICE_MIN_FILLED" 
+	fi
+
+    file_env 'QUEXF_SINGLE_CHOICE_MAX_FILLED'
+	if [ "$QUEXF_SINGLE_CHOICE_MAX_FILLED'" ]; then
+        set_config 'SINGLE_CHOICE_MAX_FILLED' "$QUEXF_SINGLE_CHOICE_MAX_FILLED" 
+	fi
+
+    file_env 'QUEXF_HTPASSWD_PATH'
+	if [ "$QUEXF_HTPASSWD_PATH'" ]; then
+        set_config 'HTPASSWD_PATH' "$QUEXF_HTPASSWD_PATH" 
+	fi
+
+    file_env 'QUEXF_HTGROUP_PATH'
+	if [ "$QUEXF_HTGROUP_PATH'" ]; then
+        set_config 'HTGROUP_PATH' "$QUEXF_HTGROUP_PATH" 
+	fi
+
 	TERM=dumb php -- "$QUEXF_DB_HOST" "$QUEXF_DB_USER" "$QUEXF_DB_PASSWORD" "$QUEXF_DB_NAME" <<'EOPHP'
 <?php
 // database might not exist, so let's try creating it (just to be safe)
@@ -244,6 +276,8 @@ $mysql->close();
 EOPHP
 
 #Run import process
+
+sleep 10
 
 su -s /bin/bash -c "php /var/www/html/admin/startprocess.php /forms" www-data &
 
