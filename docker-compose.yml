@@ -5,12 +5,16 @@ services:
   quexf:
     image: acspri/quexf
     ports:
-      - 8081:80
+      - 127.0.0.1:8081:80
     environment:
       QUEXF_DB_PASSWORD: example
       QUEXF_ADMIN_PASSWORD: password
       QUEXF_HTPASSWD_PATH: /opt/quexf/password
       QUEXF_HTGROUP_PATH: /opt/quexf/group
+      QUEXF_MULTIPLE_CHOICE_MIN_FILLED: 0.85
+      QUEXF_MULTIPLE_CHOICE_MAX_FILLED: 0.60
+      QUEXF_SINGLE_CHOICE_MIN_FILLED: 0.85
+      QUEXF_SINGLE_CHOICE_MAX_FILLED: 0.60
 
   mysql:
     image: mariadb
