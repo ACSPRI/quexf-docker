@@ -1,11 +1,12 @@
-version: '2'
+version: '3.3'
 
 services:
-
-  quexf:
+  limesurvey:
     image: acspri/quexf
-    ports:
-      - 127.0.0.1:8081:80
+    volumes:
+     - ${WEBAPP_STORAGE_HOME}/site/images:/images
+     - ${WEBAPP_STORAGE_HOME}/site/forms:/forms
+     - ${WEBAPP_STORAGE_HOME}/site/quexf:/opt/quexf
     environment:
       QUEXF_DB_PASSWORD: example
       QUEXF_ADMIN_PASSWORD: password
@@ -18,8 +19,6 @@ services:
       QUEXF_HORI_WIDTH_BOX: 58
       QUEXF_VERT_WIDTH_BOX: 58
       QUEXF_BARCODE_TLX_PORTION: 0.5
-
-  mysql:
-    image: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: example
+      MYSQL_SSL_CA: BaltimoreCyberTrustroot.crt.pem
+      WEBSITES_ENABLE_APP_SERVICE_STORAGE: TRUE
+    restart: always

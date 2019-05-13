@@ -44,6 +44,12 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 		exit 1
 	fi
 
+    # Install BaltimoreCyberTrustRoot.crt.pem
+    if [ ! -e BaltimoreCyberTrustRoot.crt.pem ]; then
+        echo "Downloading BaltimoreCyberTrustroot.crt.pem"
+        curl -o BaltimoreCyberTrustRoot.crt.pem -fsL "https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem"
+    fi
+
 	if ! [ -e index.php ]; then
 		echo >&2 "queXF not found in $(pwd) - copying now..."
 		if [ "$(ls -A)" ]; then
@@ -218,7 +224,10 @@ EOF
         set_config 'HTGROUP_PATH' "$QUEXF_HTGROUP_PATH" 
 	fi
 
-	TERM=dumb php -- "$QUEXF_DB_HOST" "$QUEXF_DB_USER" "$QUEXF_DB_PASSWORD" "$QUEXF_DB_NAME" <<'EOPHP'
+	file_env 'MYSQL_SSL_CA' ''
+	
+
+	TERM=dumb php -- "$QUEXF_DB_HOST" "$QUEXF_DB_USER" "$QUEXF_DB_PASSWORD" "$QUEXF_DB_NAME" "$MYSQL_SSL_CA" <<'EOPHP'
 <?php
 // database might not exist, so let's try creating it (just to be safe)
 
@@ -233,46 +242,53 @@ if (is_numeric($socket)) {
 
 $maxTries = 10;
 do {
-	$mysql = new mysqli($host, $argv[2], $argv[3], '', $port, $socket);
-	if ($mysql->connect_error) {
-		fwrite($stderr, "\n" . 'MySQL Connection Error: (' . $mysql->connect_errno . ') ' . $mysql->connect_error . "\n");
-		--$maxTries;
-		if ($maxTries <= 0) {
-			exit(1);
-		}
-		sleep(3);
-	}
-} while ($mysql->connect_error);
+    $con = mysqli_init();
+    if (isset($argv[5]) && !empty($argv[5])) {
+	    mysqli_ssl_set($con,NULL,NULL,"/var/www/html/" . $argv[5],NULL,NULL);
+    }
+    $mysql = mysqli_real_connect($con,$host, $argv[2], $argv[3], '', $port, $socket, MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT);
+        if (!$mysql) {
+                fwrite($stderr, "\n" . 'MySQL Connection Error: (' . $mysql->connect_errno . ') ' . $mysql->connect_error . "\n");
+                --$maxTries;
+                if ($maxTries <= 0) {
+                        exit(1);
+                }
+                sleep(3);
+        }
+} while (!$mysql);
 
-if (!$mysql->query('CREATE DATABASE IF NOT EXISTS `' . $mysql->real_escape_string($argv[4]) . '`')) {
-	fwrite($stderr, "\n" . 'MySQL "CREATE DATABASE" Error: ' . $mysql->error . "\n");
-	$mysql->close();
-	exit(1);
+if (!$con->query('CREATE DATABASE IF NOT EXISTS `' . $con->real_escape_string($argv[4]) . '`')) {
+        fwrite($stderr, "\n" . 'MySQL "CREATE DATABASE" Error: ' . $con->error . "\n");
+        $con->close();
+        exit(1);
 }
 
 // check if database populated
+$con->select_db($con->real_escape_string($argv[4]));
 
-if (!$mysql->query('SELECT COUNT(*) AS C FROM ' . $argv[4] . '.boxgrouptypes')) {
-    fwrite($stderr, "\n" . 'Cannot find queXF database. Will now populate... ' . $mysql->error . "\n");
+
+if (!$con->query('SELECT COUNT(*) AS C FROM ' . $argv[4] . '.boxgrouptypes')) {
+    fwrite($stderr, "\n" . 'Cannot find queXF database. Will now populate... ' . $con->error . "\n");
 
     $command = 'mysql'
         . ' --host=' . $host
         . ' --user=' . $argv[2]
         . ' --password=' . $argv[3]
         . ' --database=' . $argv[4]
+        . ' --ssl-ca=/var/www/html/' . $argv[5]
         . ' --execute="SOURCE ';
 
     fwrite($stderr, "\n" . 'Loading queXF database...' . "\n");
     $output1 = shell_exec($command . '/var/www/html/database/quexf.sql"');
     fwrite($stderr, "\n" . 'Loaded queXF database: ' . $output1 . "\n");
 
-    $mysql->query("INSERT INTO " . $argv[4] . ".verifiers (description,http_username) VALUES ('Administrator','admin')");
+    $con->query("INSERT INTO " . $argv[4] . ".verifiers (description,http_username) VALUES ('Administrator','admin')");
 	
 } else {
 	fwrite($stderr, "\n" . 'queXF Database found. Leaving unchanged.' . "\n");
 }
 
-$mysql->close();
+$con->close();
 EOPHP
 
 #Run import process

@@ -31,7 +31,7 @@ RUN set -x \
 
 #use ADODB
 RUN set -x \
-	&& curl -o adodb.tar.gz -fSL "https://github.com/ADOdb/ADOdb/archive/v5.20.7.tar.gz" \
+	&& curl -o adodb.tar.gz -fSL "https://github.com/ADOdb/ADOdb/archive/v5.20.14.tar.gz" \
 	&& tar -xzf adodb.tar.gz -C /usr/src/ \
 	&& rm adodb.tar.gz \
 	&& mkdir /usr/share/php \

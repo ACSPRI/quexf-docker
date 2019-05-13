@@ -38,6 +38,7 @@ The following environment variables are also honored for configuring your queXF 
 -	`-e QUEXF_MULTIPLE_CHOICE_MAX_FILLED=...` (see queXF config.default.php for details) 
 -	`-e QUEXF_HTPASSWD_PATH=...` (see queXF config.default.php for details, set this to /opt/quexf/password for auto password setting in this Docker container) 
 -	`-e QUEXF_HTGROUP_PATH=...` (see queXF config.default.php for details, set this to /opt/quexf/group for auto password setting in this Docker container) 
+-	`-e MYSQL_SSL_CA=...` (path to an SSL CA for MySQL based in the root directory (/var/www/html). If changing paths, escape your forward slashes. Do not set or leave blank for a non SSL connection)
 
 If the `QUEXF_DB_NAME` specified does not already exist on the given MySQL server, it will be created automatically upon startup of the `quexf` container, provided that the `QUEXF_DB_USER` specified has the necessary permissions to create it.
 
