@@ -9,6 +9,8 @@ services:
      - ${WEBAPP_STORAGE_HOME}/site/quexf:/opt/quexf
     environment:
       QUEXF_DB_PASSWORD: example
+      QUEXF_DB_HOST: example.mysql.database.azure.com
+      QUEXF_DB_USER: example@example
       QUEXF_ADMIN_PASSWORD: password
       QUEXF_HTPASSWD_PATH: /opt/quexf/password
       QUEXF_HTGROUP_PATH: /opt/quexf/group
@@ -19,6 +21,5 @@ services:
       QUEXF_HORI_WIDTH_BOX: 58
       QUEXF_VERT_WIDTH_BOX: 58
       QUEXF_BARCODE_TLX_PORTION: 0.5
-      MYSQL_SSL_CA: BaltimoreCyberTrustroot.crt.pem
-      WEBSITES_ENABLE_APP_SERVICE_STORAGE: TRUE
+      MYSQL_SSL_CA: /var/www/html/BaltimoreCyberTrustRoot.crt.pem
     restart: always

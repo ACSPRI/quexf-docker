@@ -44,12 +44,6 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 		exit 1
 	fi
 
-    # Install BaltimoreCyberTrustRoot.crt.pem
-    if [ ! -e BaltimoreCyberTrustRoot.crt.pem ]; then
-        echo "Downloading BaltimoreCyberTrustroot.crt.pem"
-        curl -o BaltimoreCyberTrustRoot.crt.pem -fsL "https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem"
-    fi
-
 	if ! [ -e index.php ]; then
 		echo >&2 "queXF not found in $(pwd) - copying now..."
 		if [ "$(ls -A)" ]; then
@@ -98,6 +92,12 @@ EOF
 	else
         echo >&2 "queXF password found in /opt/quexf - not copying."
 	fi
+
+    # Install BaltimoreCyberTrustRoot.crt.pem
+    if [ ! -e BaltimoreCyberTrustRoot.crt.pem ]; then
+        echo "Downloading BaltimoreCyberTrustroot.crt.pem"
+        curl -o BaltimoreCyberTrustRoot.crt.pem -fsL "https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem"
+    fi
 
 
     chown www-data:www-data -R /images 
@@ -195,37 +195,41 @@ EOF
 	fi
 
     file_env 'QUEXF_MULTIPLE_CHOICE_MIN_FILLED'
-	if [ "$QUEXF_MULTIPLE_CHOICE_MIN_FILLED'" ]; then
+	if [ "$QUEXF_MULTIPLE_CHOICE_MIN_FILLED" ]; then
         set_config 'MULTIPLE_CHOICE_MIN_FILLED' "$QUEXF_MULTIPLE_CHOICE_MIN_FILLED" 
 	fi
 
     file_env 'QUEXF_MULTIPLE_CHOICE_MAX_FILLED'
-	if [ "$QUEXF_MULTIPLE_CHOICE_MAX_FILLED'" ]; then
+	if [ "$QUEXF_MULTIPLE_CHOICE_MAX_FILLED" ]; then
         set_config 'MULTIPLE_CHOICE_MAX_FILLED' "$QUEXF_MULTIPLE_CHOICE_MAX_FILLED" 
 	fi
 
     file_env 'QUEXF_SINGLE_CHOICE_MIN_FILLED'
-	if [ "$QUEXF_SINGLE_CHOICE_MIN_FILLED'" ]; then
+	if [ "$QUEXF_SINGLE_CHOICE_MIN_FILLED" ]; then
         set_config 'SINGLE_CHOICE_MIN_FILLED' "$QUEXF_SINGLE_CHOICE_MIN_FILLED" 
 	fi
 
     file_env 'QUEXF_SINGLE_CHOICE_MAX_FILLED'
-	if [ "$QUEXF_SINGLE_CHOICE_MAX_FILLED'" ]; then
+	if [ "$QUEXF_SINGLE_CHOICE_MAX_FILLED" ]; then
         set_config 'SINGLE_CHOICE_MAX_FILLED' "$QUEXF_SINGLE_CHOICE_MAX_FILLED" 
 	fi
 
     file_env 'QUEXF_HTPASSWD_PATH'
-	if [ "$QUEXF_HTPASSWD_PATH'" ]; then
+	if [ "$QUEXF_HTPASSWD_PATH" ]; then
         set_config 'HTPASSWD_PATH' "$QUEXF_HTPASSWD_PATH" 
 	fi
 
     file_env 'QUEXF_HTGROUP_PATH'
-	if [ "$QUEXF_HTGROUP_PATH'" ]; then
+	if [ "$QUEXF_HTGROUP_PATH" ]; then
         set_config 'HTGROUP_PATH' "$QUEXF_HTGROUP_PATH" 
 	fi
 
 	file_env 'MYSQL_SSL_CA' ''
-	
+	if [ "$MYSQL_SSL_CA" ]; then
+        set_config 'DB_SSL' "$MYSQL_SSL_CA" 
+	fi
+
+
 
 	TERM=dumb php -- "$QUEXF_DB_HOST" "$QUEXF_DB_USER" "$QUEXF_DB_PASSWORD" "$QUEXF_DB_NAME" "$MYSQL_SSL_CA" <<'EOPHP'
 <?php
@@ -244,7 +248,7 @@ $maxTries = 10;
 do {
     $con = mysqli_init();
     if (isset($argv[5]) && !empty($argv[5])) {
-	    mysqli_ssl_set($con,NULL,NULL,"/var/www/html/" . $argv[5],NULL,NULL);
+	    mysqli_ssl_set($con,NULL,NULL,$argv[5],NULL,NULL);
     }
     $mysql = mysqli_real_connect($con,$host, $argv[2], $argv[3], '', $port, $socket, MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT);
         if (!$mysql) {
@@ -275,7 +279,7 @@ if (!$con->query('SELECT COUNT(*) AS C FROM ' . $argv[4] . '.boxgrouptypes')) {
         . ' --user=' . $argv[2]
         . ' --password=' . $argv[3]
         . ' --database=' . $argv[4]
-        . ' --ssl-ca=/var/www/html/' . $argv[5]
+        . ' --ssl-ca=' . $argv[5]
         . ' --execute="SOURCE ';
 
     fwrite($stderr, "\n" . 'Loading queXF database...' . "\n");

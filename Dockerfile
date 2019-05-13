@@ -31,11 +31,11 @@ RUN set -x \
 
 #use ADODB
 RUN set -x \
-	&& curl -o adodb.tar.gz -fSL "https://github.com/ADOdb/ADOdb/archive/v5.20.14.tar.gz" \
+	&& curl -o adodb.tar.gz -fSL "https://github.com/ADOdb/ADOdb/archive/master.tar.gz" \
 	&& tar -xzf adodb.tar.gz -C /usr/src/ \
 	&& rm adodb.tar.gz \
 	&& mkdir /usr/share/php \
-	&& mv /usr/src/ADOdb-5.20.14 /usr/share/php/adodb
+	&& mv /usr/src/ADOdb-master /usr/share/php/adodb
 
 #Set PHP defaults for queXS (allow bigger uploads for sample files)
 RUN { \
