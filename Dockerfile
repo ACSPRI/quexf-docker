@@ -35,7 +35,7 @@ RUN set -x \
 	&& tar -xzf adodb.tar.gz -C /usr/src/ \
 	&& rm adodb.tar.gz \
 	&& mkdir /usr/share/php \
-	&& mv /usr/src/ADOdb-5.20.7 /usr/share/php/adodb
+	&& mv /usr/src/ADOdb-5.20.14 /usr/share/php/adodb
 
 #Set PHP defaults for queXS (allow bigger uploads for sample files)
 RUN { \
