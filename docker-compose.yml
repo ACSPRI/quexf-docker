@@ -5,7 +5,7 @@ services:
   quexf:
     image: acspri/quexf
     ports:
-      - 127.0.0.1:8081:80
+      - 8081:80
     environment:
       QUEXF_DB_PASSWORD: example
       QUEXF_ADMIN_PASSWORD: password
