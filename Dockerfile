@@ -1,7 +1,9 @@
-FROM php:7-apache
+FROM php:7.3-apache
+
+ENV DOWNLOAD_URL https://master.dl.sourceforge.net/project/quexf/quexf/quexf-1.20.7/quexf-1.20.7.zip
 
 # install the PHP extensions we need
-RUN apt-get update && apt-get install -y bzr libpng-dev libjpeg-dev mysql-client ghostscript tesseract-ocr apache2-utils && rm -rf /var/lib/apt/lists/* \
+RUN apt-get update && apt-get install -y unzip libpng-dev libjpeg-dev mariadb-client ghostscript tesseract-ocr apache2-utils && rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
 	&& docker-php-ext-install gd mysqli opcache
 
@@ -23,11 +25,15 @@ RUN mkdir /images && chown www-data:www-data /images
 RUN mkdir /opt/quexf && chown www-data:www-data /opt/quexf
 RUN mkdir /forms && chown www-data:www-data /forms
 
-VOLUME ["/var/www/html", "/images", "/forms", "/opt/quexf"]
+VOLUME ["/images", "/forms", "/opt/quexf"]
 
-RUN set -x \
-	&& bzr branch lp:quexf /usr/src/quexf \
-	&& chown -R www-data:www-data /usr/src/quexf
+RUN set -x; \
+    curl -SL "$DOWNLOAD_URL" -o /tmp/quexf.zip; \
+    unzip /tmp/quexf.zip -d /tmp; \
+    mv /tmp/quexf*/* /var/www/html/; \
+    rm /tmp/quexf.zip; \
+    rmdir /tmp/quexf*; \
+    chown -R www-data:www-data /var/www/html
 
 #use ADODB
 RUN set -x \

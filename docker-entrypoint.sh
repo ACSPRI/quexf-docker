@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eu
 
+cd /var/www/html
+
 # usage: file_env VAR [DEFAULT]
 #    ie: file_env 'XYZ_DB_PASSWORD' 'example'
 # (will allow for "$XYZ_DB_PASSWORD_FILE" to fill in the value of
@@ -44,46 +46,41 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 		exit 1
 	fi
 
-	if ! [ -e index.php ]; then
-		echo >&2 "queXF not found in $(pwd) - copying now..."
-		if [ "$(ls -A)" ]; then
-			echo >&2 "WARNING: $(pwd) is not empty - press Ctrl+C now if this is an error!"
-			( set -x; ls -A; sleep 10 )
-		fi
-		bzr export . /usr/src/quexf
+	if [ ! -e /var/www/html/.htaccess ]; then
+		echo >&2 "queXF access control not found in $(pwd) - installing now..."
 
-        cat <<EOF > admin/.htaccess
+        cat << EOF > /var/www/html/admin/.htaccess
 AuthName "queXF"
 AuthType Basic
 AuthUserFile /opt/quexf/password
 AuthGroupFile /opt/quexf/group
 require group admin
 EOF
-       cat <<EOF > client/.htaccess
+       cat << EOF > /var/www/html/client/.htaccess
 AuthName "queXF"
 AuthType Basic
 AuthUserFile /opt/quexf/password
 AuthGroupFile /opt/quexf/group
 require group client
 EOF
-       cat <<EOF > .htaccess
+       cat << EOF > /var/www/html/.htaccess
 AuthName "queXF"
 AuthType Basic
 AuthUserFile /opt/quexf/password
 AuthGroupFile /opt/quexf/group
 require group verifier
 EOF
-		echo >&2 "Complete! queXF has been successfully copied to $(pwd)"
+		echo >&2 "Complete! queXF access control has been successfully installed to $(pwd)"
 	else
-        echo >&2 "queXF found in $(pwd) - not copying."
+        echo >&2 "queXF access control found in $(pwd) - not installing."
 	fi
 
-	if ! [ -e /opt/quexf/password ]; then
+	if [ ! -e /opt/quexf/password ]; then
 		echo >&2 "queXF password not found in /opt/quexf/password - creating now..."
         
         htpasswd -c -s -b /opt/quexf/password admin "$QUEXF_ADMIN_PASSWORD"
 
-		cat <<EOF > /opt/quexf/group
+        cat << EOF > /opt/quexf/group
 admin: admin
 verifier: admin
 client: admin
@@ -244,7 +241,7 @@ if (is_numeric($socket)) {
 	$socket = null;
 }
 
-$maxTries = 10;
+$maxTries = 50;
 do {
     $con = mysqli_init();
     if (isset($argv[5]) && !empty($argv[5])) {
