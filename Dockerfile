@@ -1,10 +1,10 @@
-FROM php:7.3-apache
+FROM php:7.4-apache
 
-ENV DOWNLOAD_URL https://master.dl.sourceforge.net/project/quexf/quexf/quexf-1.20.7/quexf-1.20.7.zip
+ENV DOWNLOAD_URL https://master.dl.sourceforge.net/project/quexf/quexf/quexf-1.20.8/quexf-1.20.8.zip
 
 # install the PHP extensions we need
-RUN apt-get update && apt-get install -y unzip libpng-dev libjpeg-dev mariadb-client ghostscript tesseract-ocr apache2-utils && rm -rf /var/lib/apt/lists/* \
-	&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
+RUN apt-get update && apt-get install -y unzip libpng-dev libjpeg-dev mariadb-client ghostscript tesseract-ocr apache2-utils zlib1g-dev && rm -rf /var/lib/apt/lists/* \
+	&& docker-php-ext-configure gd --with-jpeg \
 	&& docker-php-ext-install gd mysqli opcache
 
 # set recommended PHP.ini settings
