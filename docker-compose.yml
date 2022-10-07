@@ -3,7 +3,7 @@ version: '2'
 services:
 
   quexf:
-    image: acspri/quexf
+    image: acspri/quexf:1.20.8
     ports:
       - 8081:80
     environment:
