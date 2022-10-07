@@ -3,9 +3,10 @@ version: '2'
 services:
 
   quexf:
-    image: acspri/quexf:1.20.8
+    image: acspri/quexf:1.20.9
+    build: .
     ports:
-      - 8081:80
+      - 8079:80
     environment:
       QUEXF_DB_PASSWORD: example
       QUEXF_ADMIN_PASSWORD: password
@@ -18,8 +19,10 @@ services:
       QUEXF_HORI_WIDTH_BOX: 58
       QUEXF_VERT_WIDTH_BOX: 58
       QUEXF_BARCODE_TLX_PORTION: 0.5
+    restart: unless-stopped
 
   mysql:
-    image: mariadb
+    image: mariadb:10.5
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: example
